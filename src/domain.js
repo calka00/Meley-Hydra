@@ -1,0 +1,88 @@
+export const HYDRA_COOLDOWN_MS = 20 * 60 * 1000
+export const MELEY_WAIT_MS = 4 * 60 * 60 * 1000
+export const BACKUP_VERSION = 1
+
+export function createInitialMeleyState() {
+  return { phase: 'readyToRegister', endsAt: null }
+}
+
+export function startHydra(now) {
+  return { startedAt: now, endsAt: now + HYDRA_COOLDOWN_MS }
+}
+
+export function registerMeley(now) {
+  return { phase: 'waitingToEnter', endsAt: now + MELEY_WAIT_MS }
+}
+
+export function enterMeley(state, now) {
+  if (state.phase !== 'readyToEnter') return state
+  return { phase: 'waitingToRegister', endsAt: now + MELEY_WAIT_MS }
+}
+
+export function resolveMeleyState(state, now) {
+  if (state.endsAt === null || now < state.endsAt) return state
+  if (state.phase === 'waitingToEnter') return { phase: 'readyToEnter', endsAt: null }
+  if (state.phase === 'waitingToRegister') return { phase: 'readyToRegister', endsAt: null }
+  return state
+}
+
+export function getRemainingMs(endsAt, now) {
+  return endsAt ? Math.max(0, endsAt - now) : 0
+}
+
+export function getLocalDateKey(value) {
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+export function getHydraStats(runs, today = getLocalDateKey(Date.now())) {
+  const total = runs.reduce((sum, run) => sum + run.chests, 0)
+  const todayTotal = runs
+    .filter((run) => getLocalDateKey(run.createdAt) === today)
+    .reduce((sum, run) => sum + run.chests, 0)
+  return {
+    runs: runs.length,
+    total,
+    average: runs.length ? Number((total / runs.length).toFixed(2)) : 0,
+    today: todayTotal,
+  }
+}
+
+export function validateChestCount(raw) {
+  const value = String(raw).trim()
+  if (!/^\d+$/.test(value)) return { valid: false, error: 'Wpisz nieujemną liczbę całkowitą.' }
+  return { valid: true, value: Number(value) }
+}
+
+export function serializeBackup(state) {
+  return JSON.stringify({ version: BACKUP_VERSION, ...state }, null, 2)
+}
+
+export function parseBackup(raw) {
+  let data
+  try {
+    data = JSON.parse(raw)
+  } catch {
+    throw new Error('Plik nie zawiera poprawnego JSON.')
+  }
+  if (!data || data.version !== BACKUP_VERSION || !Array.isArray(data.hydraRuns)) {
+    throw new Error('Nieprawidłowy format kopii zapasowej.')
+  }
+  if (!data.meley || typeof data.meley.phase !== 'string') {
+    throw new Error('Brak poprawnego stanu Meley.')
+  }
+  const hydraRuns = data.hydraRuns.map((run) => {
+    if (!run || typeof run.id !== 'string' || typeof run.createdAt !== 'string' || !Number.isInteger(run.chests) || run.chests < 0) {
+      throw new Error('Nieprawidłowy wpis Hydry.')
+    }
+    return run
+  })
+  return {
+    hydra: data.hydra ?? null,
+    hydraRuns,
+    meley: { phase: data.meley.phase, endsAt: data.meley.endsAt ?? null },
+  }
+}
