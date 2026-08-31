@@ -66,3 +66,16 @@ Każdy aktywny timer pokazuje czas zakończenia i ma kontrolkę resetu wymagają
 - Backend i baza danych.
 - Automatyczne pobieranie danych z gry.
 - Powiadomienia systemowe; dashboard pokazuje stan po otwarciu lub powrocie do karty.
+
+## Rozszerzenie: cena i sprzedaż skrzyń
+
+- Źródło ceny: Metin2Alerts, serwer `[RUBY] Kirin`, przedmiot `Skrzynia Hydry`.
+- Panel pod historią runów pokazuje wyłącznie cenę skrzyni, liczbę skrzyń do sprzedania i ich bieżącą wartość.
+- Cena jest najniższą aktualną ofertą i jest formatowana skrótowo, np. `37,5kk`.
+- Licznik skrzyń do sprzedania zwiększa się przy zapisie każdego runa Hydry.
+- Wartość bieżącego zarobku to `niesprzedane skrzynie × cena skrzyni`.
+- Po osiągnięciu 40 skrzyń panel pokazuje wyróżniony komunikat o gotowości do sprzedaży.
+- Przycisk `Sprzedane / wyzeruj` zeruje wyłącznie licznik niesprzedanych skrzyń; historia runów pozostaje bez zmian.
+- Cena jest pobierana przy otwarciu aplikacji oraz na żądanie po kliknięciu `Odśwież cenę`.
+- Ostatnia poprawna cena jest przechowywana lokalnie. Błąd pobrania nie usuwa tej ceny i pokazuje krótki komunikat.
+- Działanie zależy od publicznego endpointu lub możliwości odczytu Metin2Alerts. Jeśli przeglądarka blokuje CORS, implementacja musi użyć lokalnego proxy albo jasno zgłosić brak automatycznego odczytu; nie wolno udawać aktualnej ceny.
