@@ -1,6 +1,7 @@
 export const HYDRA_COOLDOWN_MS = 20 * 60 * 1000
 export const MELEY_WAIT_MS = 4 * 60 * 60 * 1000
 export const BACKUP_VERSION = 1
+export const PRICE_ALERT_THRESHOLD = 40
 
 export function createInitialMeleyState() {
   return { phase: 'readyToRegister', endsAt: null }
@@ -57,6 +58,27 @@ export function validateChestCount(raw) {
   return { valid: true, value: Number(value) }
 }
 
+export function getUnsoldChests(runs, soldChests = 0) {
+  return Math.max(0, runs.reduce((sum, run) => sum + run.chests, 0) - soldChests)
+}
+
+export function parsePriceKk(raw) {
+  const normalized = String(raw).trim().replace(',', '.')
+  const value = Number(normalized)
+  return Number.isFinite(value) && value > 0 ? value * 1_000_000 : null
+}
+
+export function formatYang(value) {
+  if (!Number.isFinite(value) || value <= 0) return 'Brak ceny'
+  const kk = value / 1_000_000
+  const formatted = Number.isInteger(kk) ? String(kk) : kk.toFixed(1).replace('.', ',')
+  return `${formatted}kk`
+}
+
+export function getChestValue(count, price) {
+  return count * (price || 0)
+}
+
 export function serializeBackup(state) {
   return JSON.stringify({ version: BACKUP_VERSION, ...state }, null, 2)
 }
@@ -83,6 +105,8 @@ export function parseBackup(raw) {
   return {
     hydra: data.hydra ?? null,
     hydraRuns,
+    soldChests: Number.isInteger(data.soldChests) && data.soldChests >= 0 ? data.soldChests : 0,
+    chestPriceKk: typeof data.chestPriceKk === 'string' ? data.chestPriceKk : '',
     meley: { phase: data.meley.phase, endsAt: data.meley.endsAt ?? null },
   }
 }

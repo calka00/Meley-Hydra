@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   MELEY_WAIT_MS,
   getHydraStats,
+  getChestValue,
+  getUnsoldChests,
+  formatYang,
   registerMeley,
   enterMeley,
   resolveMeleyState,
@@ -38,5 +41,15 @@ describe('dungeon domain', () => {
     expect(validateChestCount('-1').valid).toBe(false)
     expect(validateChestCount('1.5').valid).toBe(false)
     expect(validateChestCount('4').value).toBe(4)
+  })
+
+  it('calculates unsold inventory after a sale reset', () => {
+    expect(getUnsoldChests([{ chests: 12 }, { chests: 31 }], 0)).toBe(43)
+    expect(getUnsoldChests([{ chests: 12 }, { chests: 31 }], 43)).toBe(0)
+  })
+
+  it('formats and calculates manually entered chest price', () => {
+    expect(formatYang(37500000)).toBe('37,5kk')
+    expect(getChestValue(43, 37500000)).toBe(1612500000)
   })
 })
