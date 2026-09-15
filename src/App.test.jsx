@@ -19,6 +19,37 @@ describe('dashboard', () => {
     expect(screen.getByText('19:59')).toBeInTheDocument()
   })
 
+  it('skips active Hydra without saving a run', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Rozpocznij run' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Pomiń Hydrę' }))
+    expect(screen.getByRole('button', { name: 'Rozpocznij run' })).toBeInTheDocument()
+    expect(screen.getByText('0 zapisanych')).toBeInTheDocument()
+  })
+
+  it('shows active Hydra time in browser-tab title and restores default after reset', () => {
+    render(<App />)
+    expect(document.title).toBe('Dungeon Tracker | Metin2')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Rozpocznij run' }))
+    expect(document.title).toBe('20:00 | Hydra')
+
+    act(() => vi.advanceTimersByTime(1000))
+    expect(document.title).toBe('19:59 | Hydra')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Resetuj timer' }))
+    expect(document.title).toBe('Dungeon Tracker | Metin2')
+  })
+
+  it('restores default browser-tab title when Hydra expires', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Rozpocznij run' }))
+
+    act(() => vi.advanceTimersByTime(20 * 60 * 1000))
+
+    expect(document.title).toBe('Dungeon Tracker | Metin2')
+  })
+
   it('advances Meley from registration through entry', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: 'Zarejestruj' }))

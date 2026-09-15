@@ -4,26 +4,26 @@ export const BACKUP_VERSION = 1
 export const PRICE_ALERT_THRESHOLD = 40
 
 export function createInitialMeleyState() {
-  return { phase: 'readyToRegister', endsAt: null }
+  return { phase: 'readyToRegister', endsAt: null, channel: 'CH1', registeredAt: null }
 }
 
 export function startHydra(now) {
   return { startedAt: now, endsAt: now + HYDRA_COOLDOWN_MS }
 }
 
-export function registerMeley(now) {
-  return { phase: 'waitingToEnter', endsAt: now + MELEY_WAIT_MS }
+export function registerMeley(state, now) {
+  return { ...state, phase: 'waitingToEnter', endsAt: now + MELEY_WAIT_MS, registeredAt: now }
 }
 
 export function enterMeley(state, now) {
   if (state.phase !== 'readyToEnter') return state
-  return { phase: 'waitingToRegister', endsAt: now + MELEY_WAIT_MS }
+  return { ...state, phase: 'waitingToRegister', endsAt: now + MELEY_WAIT_MS }
 }
 
 export function resolveMeleyState(state, now) {
   if (state.endsAt === null || now < state.endsAt) return state
-  if (state.phase === 'waitingToEnter') return { phase: 'readyToEnter', endsAt: null }
-  if (state.phase === 'waitingToRegister') return { phase: 'readyToRegister', endsAt: null }
+  if (state.phase === 'waitingToEnter') return { ...state, phase: 'readyToEnter', endsAt: null }
+  if (state.phase === 'waitingToRegister') return { ...state, phase: 'readyToRegister', endsAt: null }
   return state
 }
 
@@ -107,6 +107,6 @@ export function parseBackup(raw) {
     hydraRuns,
     soldChests: Number.isInteger(data.soldChests) && data.soldChests >= 0 ? data.soldChests : 0,
     chestPriceKk: typeof data.chestPriceKk === 'string' ? data.chestPriceKk : '',
-    meley: { phase: data.meley.phase, endsAt: data.meley.endsAt ?? null },
+    meley: { phase: data.meley.phase, endsAt: data.meley.endsAt ?? null, channel: /^CH[1-6]$/.test(data.meley.channel) ? data.meley.channel : 'CH1', registeredAt: Number.isFinite(data.meley.registeredAt) ? data.meley.registeredAt : null },
   }
 }

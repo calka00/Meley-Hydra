@@ -17,4 +17,12 @@ describe('RunHistory', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Usuń run' }))
     expect(onDelete).toHaveBeenCalledWith('one')
   })
+
+  it('shows five runs per page', () => {
+    const runs = Array.from({ length: 6 }, (_, index) => ({ id: String(index + 1), createdAt: `2026-08-31T10:0${index}:00.000Z`, chests: index + 1 }))
+    render(<RunHistory runs={runs} onUpdate={vi.fn()} onDelete={vi.fn()} />)
+    expect(screen.getAllByRole('button', { name: 'Edytuj run' })).toHaveLength(5)
+    fireEvent.click(screen.getByRole('button', { name: 'Następna' }))
+    expect(screen.getByText('1 skrzyń')).toBeInTheDocument()
+  })
 })

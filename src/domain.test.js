@@ -5,6 +5,7 @@ import {
   getChestValue,
   getUnsoldChests,
   formatYang,
+  createInitialMeleyState,
   registerMeley,
   enterMeley,
   resolveMeleyState,
@@ -18,8 +19,13 @@ describe('dungeon domain', () => {
   })
 
   it('moves Meley from registration wait to entry-ready', () => {
-    const state = registerMeley(1000)
-    expect(resolveMeleyState(state, 1000 + MELEY_WAIT_MS)).toEqual({ phase: 'readyToEnter', endsAt: null })
+    const state = registerMeley(createInitialMeleyState(), 1000)
+    expect(resolveMeleyState(state, 1000 + MELEY_WAIT_MS)).toMatchObject({ phase: 'readyToEnter', endsAt: null })
+  })
+
+  it('records selected Meley channel and registration time', () => {
+    const state = { ...createInitialMeleyState(), channel: 'CH4' }
+    expect(registerMeley(state, 1000)).toEqual({ phase: 'waitingToEnter', endsAt: 1000 + MELEY_WAIT_MS, channel: 'CH4', registeredAt: 1000 })
   })
 
   it('moves Meley from entry to registration wait', () => {
