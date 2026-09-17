@@ -68,4 +68,11 @@ describe('dashboard', () => {
     expect(screen.getByText('0 szt.')).toBeInTheDocument()
     expect(screen.getByText('40 skrzyń')).toBeInTheDocument()
   })
+
+  it('adds a character from the Cory tab', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Cory' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Dodaj postać' }))
+    expect(screen.getByDisplayValue('Postać 1')).toBeInTheDocument()
+  })
 })

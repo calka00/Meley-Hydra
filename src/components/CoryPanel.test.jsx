@@ -29,4 +29,12 @@ describe('CoryPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Jutro' }))
     expect(screen.getByRole('button', { name: 'Puste' })).toBeDisabled()
   })
+
+  it('adds a character when UUID API is unavailable on plain HTTP', () => {
+    const cory = createInitialCoryState()
+    vi.stubGlobal('crypto', {})
+    render(<CoryPanel cory={cory} now={new Date('2026-09-17T12:00:00')} onChange={vi.fn()} />)
+    expect(() => fireEvent.click(screen.getByRole('button', { name: 'Dodaj postać' }))).not.toThrow()
+    vi.unstubAllGlobals()
+  })
 })
