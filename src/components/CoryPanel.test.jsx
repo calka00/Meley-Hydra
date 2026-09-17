@@ -20,14 +20,13 @@ describe('CoryPanel', () => {
     cory.accounts[0].characters = [{ id: 'char-1', name: 'Ninja' }]
     const onChange = vi.fn()
     const { rerender } = render(<CoryPanel cory={cory} now={new Date('2026-09-17T12:00:00')} onChange={onChange} />)
-    fireEvent.click(screen.getByRole('button', { name: 'Puste' }))
+    fireEvent.click(screen.getAllByRole('button', { name: 'Puste' })[0])
     expect(onChange.mock.lastCall[0].statuses).toBeTruthy()
     const received = onChange.mock.lastCall[0]
     rerender(<CoryPanel cory={received} now={new Date('2026-09-17T12:00:00')} onChange={onChange} />)
     fireEvent.click(screen.getByRole('button', { name: 'Odebrane' }))
     expect(onChange.mock.lastCall[0].statuses).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: 'Jutro' }))
-    expect(screen.getByRole('button', { name: 'Puste' })).toBeDisabled()
+    expect(screen.getAllByRole('button', { name: 'Puste' }).at(-1)).toBeDisabled()
   })
 
   it('adds a character when UUID API is unavailable on plain HTTP', () => {
@@ -36,5 +35,16 @@ describe('CoryPanel', () => {
     render(<CoryPanel cory={cory} now={new Date('2026-09-17T12:00:00')} onChange={vi.fn()} />)
     expect(() => fireEvent.click(screen.getByRole('button', { name: 'Dodaj postać' }))).not.toThrow()
     vi.unstubAllGlobals()
+  })
+
+  it('shows all three game days in one character row', () => {
+    const cory = createInitialCoryState()
+    cory.accounts[0].characters = [{ id: 'char-1', name: 'Ninja' }]
+    render(<CoryPanel cory={cory} now={new Date('2026-09-17T12:00:00')} onChange={vi.fn()} />)
+    expect(screen.getByText('Wczoraj')).toBeInTheDocument()
+    expect(screen.getByText('Dzisiaj')).toBeInTheDocument()
+    expect(screen.getByText('Jutro')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Puste' })).toHaveLength(3)
+    expect(screen.getAllByRole('button', { name: 'Puste' })[2]).toBeDisabled()
   })
 })
