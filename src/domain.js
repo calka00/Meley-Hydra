@@ -3,6 +3,25 @@ export const MELEY_WAIT_MS = 4 * 60 * 60 * 1000
 export const BACKUP_VERSION = 1
 export const PRICE_ALERT_THRESHOLD = 40
 
+export function createInitialCoryState() {
+  return { accounts: [{ id: 'account-1', name: 'Konto 1', characters: [] }, { id: 'account-2', name: 'Konto 2', characters: [] }, { id: 'account-3', name: 'Konto 3', characters: [] }], statuses: {} }
+}
+
+export function getGameDateKey(value) {
+  const date = new Date(value)
+  if (date.getHours() < 2) date.setDate(date.getDate() - 1)
+  return getLocalDateKey(date)
+}
+
+export function advanceCoryStatus(status) {
+  if (status === 'received') return 'completed'
+  return status === 'completed' ? 'completed' : 'received'
+}
+
+export function getCoryStatus(state, dateKey, accountId, characterId) {
+  return state.statuses?.[dateKey]?.[accountId]?.[characterId] ?? ''
+}
+
 export function createInitialMeleyState() {
   return { phase: 'readyToRegister', endsAt: null, channel: 'CH1', registeredAt: null }
 }

@@ -5,6 +5,17 @@
 body { margin: 0; min-width: 320px; background: radial-gradient(circle at 10% -10%, #1a2c2a 0, transparent 35%), #101313; }
 button, input { font: inherit; }
 button { cursor: pointer; }
+.main-tabs, .cory-tabs, .cory-days { display: flex; gap: 10px; margin: 16px 0; }
+.cory-panel { border: 1px solid #263130; background: #171c1cdd; border-radius: 14px; padding: 20px 22px; }
+.cory-panel > label { display: block; margin: 18px 0 7px; color: #95a4a1; font-size: 12px; }
+.cory-panel > input, .cory-row input, .cory-panel select { width: 100%; padding: 10px; border: 1px solid #354543; border-radius: 8px; background: #101515; color: #eef2f1; }
+.cory-characters { margin: 18px 0; border-top: 1px solid #283331; }
+.cory-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #283331; }
+.cory-status { min-width: 110px; border: 1px solid #354543; border-radius: 8px; color: #14201e; font-weight: 700; }
+.cory-status-empty { background: #fff; }
+.cory-status-received { background: #65a9e8; }
+.cory-status-completed { background: #6dcc83; }
+.cory-row input { flex: 1; }
 .app-shell { width: min(1040px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 64px; }
 .topbar, .brand, .card-heading, .section-title, .timer-row, .meley-phase, .history-row, .settings, .settings-actions, .inline-form, .edit-row { display: flex; align-items: center; }
 .topbar, .section-title, .timer-row, .meley-phase, .history-row, .settings { justify-content: space-between; }

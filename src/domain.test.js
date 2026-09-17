@@ -6,6 +6,8 @@ import {
   getUnsoldChests,
   formatYang,
   createInitialMeleyState,
+  advanceCoryStatus,
+  getGameDateKey,
   registerMeley,
   enterMeley,
   resolveMeleyState,
@@ -14,6 +16,16 @@ import {
 } from './domain'
 
 describe('dungeon domain', () => {
+  it('uses 02:00 as game-day boundary', () => {
+    expect(getGameDateKey(new Date('2026-09-17T01:59:00'))).toBe('2026-09-16')
+    expect(getGameDateKey(new Date('2026-09-17T02:00:00'))).toBe('2026-09-17')
+  })
+
+  it('advances Cory status only until completed', () => {
+    expect(advanceCoryStatus('')).toBe('received')
+    expect(advanceCoryStatus('received')).toBe('completed')
+    expect(advanceCoryStatus('completed')).toBe('completed')
+  })
   it('starts Hydra for 20 minutes using an absolute end timestamp', () => {
     expect(startHydra(1000)).toEqual({ startedAt: 1000, endsAt: 1201000 })
   })
