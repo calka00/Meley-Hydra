@@ -75,4 +75,14 @@ describe('dashboard', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Dodaj postać' }))
     expect(screen.getByDisplayValue('Postać 1')).toBeInTheDocument()
   })
+
+  it('saves Hydra run on plain HTTP without UUID API', () => {
+    vi.stubGlobal('crypto', {})
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Rozpocznij run' }))
+    fireEvent.change(screen.getByLabelText('Liczba skrzyń'), { target: { value: '4' } })
+    expect(() => fireEvent.click(screen.getByRole('button', { name: 'Zapisz run' }))).not.toThrow()
+    expect(screen.getByText('4 skrzyń')).toBeInTheDocument()
+    vi.unstubAllGlobals()
+  })
 })
