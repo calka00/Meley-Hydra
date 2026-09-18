@@ -8,6 +8,8 @@ import {
   createInitialMeleyState,
   advanceCoryStatus,
   getGameDateKey,
+  getNextDropStart,
+  validateDropSummary,
   registerMeley,
   enterMeley,
   resolveMeleyState,
@@ -16,6 +18,15 @@ import {
 } from './domain'
 
 describe('dungeon domain', () => {
+  it('validates drop summary values as non-negative integers', () => {
+    expect(validateDropSummary({ cory: 4, ruby: 1, garnet: 0, onyx: 0, sapphire: 0, jade: 0, diamond: 0 }).valid).toBe(true)
+    expect(validateDropSummary({ cory: -1, ruby: 0, garnet: 0, onyx: 0, sapphire: 0, jade: 0, diamond: 0 }).valid).toBe(false)
+  })
+
+  it('starts next drop period after last summary', () => {
+    expect(getNextDropStart([{ endDate: '2026-09-17' }], '2026-09-20')).toBe('2026-09-18')
+    expect(getNextDropStart([], '2026-09-20')).toBe('2026-09-20')
+  })
   it('uses 02:00 as game-day boundary', () => {
     expect(getGameDateKey(new Date('2026-09-17T01:59:00'))).toBe('2026-09-16')
     expect(getGameDateKey(new Date('2026-09-17T02:00:00'))).toBe('2026-09-17')

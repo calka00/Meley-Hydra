@@ -23,6 +23,15 @@ button { cursor: pointer; }
 .cory-table thead small { display: block; color: #95a4a1; font-weight: 400; }
 .cory-table tbody th input { width: 130px; }
 .cory-table .cory-status { width: 100%; min-height: 38px; }
+.drop-history { margin-top: 14px; padding: 20px 22px; border: 1px solid #263130; background: #171c1cdd; border-radius: 14px; }
+.drop-form { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.drop-form label { color: #95a4a1; font-size: 12px; }
+.drop-form input { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 9px; border: 1px solid #354543; border-radius: 8px; background: #101515; color: #eef2f1; }
+.drop-form .button { grid-column: 1 / -1; }
+.drop-history-list { margin-top: 20px; border-top: 1px solid #283331; }
+.drop-history-row { padding: 14px 0; border-bottom: 1px solid #283331; }
+.drop-history-row > div { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; color: #95a4a1; font-size: 12px; }
+@media (max-width: 760px) { .drop-form { grid-template-columns: repeat(2, 1fr); } }
 .app-shell { width: min(1040px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 64px; }
 .topbar, .brand, .card-heading, .section-title, .timer-row, .meley-phase, .history-row, .settings, .settings-actions, .inline-form, .edit-row { display: flex; align-items: center; }
 .topbar, .section-title, .timer-row, .meley-phase, .history-row, .settings { justify-content: space-between; }

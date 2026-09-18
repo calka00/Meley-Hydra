@@ -2,9 +2,25 @@ export const HYDRA_COOLDOWN_MS = 20 * 60 * 1000
 export const MELEY_WAIT_MS = 4 * 60 * 60 * 1000
 export const BACKUP_VERSION = 1
 export const PRICE_ALERT_THRESHOLD = 40
+export const DROP_TYPES = ['cory', 'ruby', 'garnet', 'onyx', 'sapphire', 'jade', 'diamond']
+
+export function createEmptyDropSummary() {
+  return Object.fromEntries(DROP_TYPES.map((type) => [type, '']))
+}
+
+export function validateDropSummary(summary) {
+  return { valid: DROP_TYPES.every((type) => /^\d+$/.test(String(summary[type]).trim())) }
+}
+
+export function getNextDropStart(history, currentDateKey) {
+  if (!history.length) return currentDateKey
+  const date = new Date(`${history[history.length - 1].endDate}T12:00:00`)
+  date.setDate(date.getDate() + 1)
+  return getLocalDateKey(date)
+}
 
 export function createInitialCoryState() {
-  return { accounts: [{ id: 'account-1', name: 'Konto 1', characters: [] }, { id: 'account-2', name: 'Konto 2', characters: [] }, { id: 'account-3', name: 'Konto 3', characters: [] }], statuses: {} }
+  return { accounts: [{ id: 'account-1', name: 'Konto 1', characters: [] }, { id: 'account-2', name: 'Konto 2', characters: [] }, { id: 'account-3', name: 'Konto 3', characters: [] }], statuses: {}, dropHistory: [] }
 }
 
 export function getGameDateKey(value) {

@@ -10,7 +10,7 @@ import CoryPanel from './components/CoryPanel'
 
 const STORAGE_KEY = 'metin2-dungeon-tracker-v1'
 const initial = { hydra: null, hydraDraft: '', hydraRuns: [], soldChests: 0, chestPriceKk: '', meley: createInitialMeleyState(), cory: createInitialCoryState(), activeTab: 'tracker' }
-const load = () => { try { const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); return saved ? { ...initial, ...saved, meley: { ...initial.meley, ...saved.meley }, cory: { ...initial.cory, ...saved.cory } } : initial } catch { return initial } }
+const load = () => { try { const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); return saved ? { ...initial, ...saved, meley: { ...initial.meley, ...saved.meley }, cory: { ...initial.cory, ...saved.cory, dropHistory: saved.cory?.dropHistory || [] } } : initial } catch { return initial } }
 const formatHydraTitle = (remaining) => { const total = Math.ceil(remaining / 1000); return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')} | Hydra` }
 
 export default function App() {
